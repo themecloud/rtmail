@@ -39,7 +39,7 @@ Then you can use `service rtmail start` to start the RTMAIL service.
 
 ## Routes
 
-In can configure your email routes in routes.conf, a route looks like this:
+You can configure your email routes in routes.conf, a route looks like this:
 ```
     {
         "Recipient":".+@example.com",
