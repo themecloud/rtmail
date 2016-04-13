@@ -14,7 +14,7 @@ Simply run the following to install a basic setup of RTMAIL.
 
 `curl -s https://raw.githubusercontent.com/rasmusj-se/rtmail/master/install.sh | sudo bash`
 
-Change your config in /etc/rtmail/ and start RTMAIL with `$ rtmail`
+Change your config in /etc/rtmail/ and start RTMAIL with `rtmail`
 
 ## From source
 
