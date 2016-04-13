@@ -36,3 +36,45 @@ respawn limit 10 90
 ```
 
 Then you can use `service rtmail start` to start the RTMAIL service.
+
+## Routes
+
+In can configure your email routes in routes.conf, a route looks like this:
+```
+    {
+        "Recipient":".+@example.com",
+        "Type":"SMTP",
+        "Destination":"me@example.se",
+        "LocalhostOnly": false
+    }
+```
+Where recipient is a regex string of which incoming mail will have to match to activate the route. Type is the forwarding type, may be ither HTTP or SMTP. Destination is where to send the mail, if this is blank the destination address will not be changed. If you are using HTTP routing Destination should be set to an URL of which to POST your raw email data.
+
+To create a local forwarding server (local open relay) you can add the following to the routes.
+```
+    {
+        "Type":"SMTP",
+        "LocalhostOnly": true
+    }
+```
+This will match all recipients and will not change the recipient when routing. It is also only permitted from localhost to protect us from creating an open-replay that spam-bots can use.
+
+## Config
+
+```
+{
+    "Cert":"/etc/rtmail/cert.crt",
+    "Key":"/etc/rtmail/cert.key",
+    "Hostname":"mail.example.com",
+    "Relay":"smtp.sendgrid.net:587",
+    "Username":"username",
+    "Password":"password",
+    "Routes":"/etc/rtmail/routes.conf",
+    "Port":"25"
+}
+```
+This is the standard configuration. Cert and Key specifies which TLS certficate and key to use on the incoming SMTP server. Relay is the SMTP server that we will send our mail to when we use SMTP routing, username and password is the auth that will be used on the relay server. Routes is the path to the routing file.
+
+## Why
+
+I created this to forward mails to my private email rasmus@rasmusj.se to my gmail inbox, and I thought that I might want to add more routes in the future so I added a general feature to add more routes to the relay without having to recompile the binary. 
