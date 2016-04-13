@@ -1,2 +1,2 @@
 #!/bin/sh
-/usr/bin/rtmail > /var/log/rtmail.log
+/usr/bin/rtmail &> /var/log/rtmail.log
