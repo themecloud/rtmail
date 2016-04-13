@@ -19,6 +19,7 @@ type Route struct{
     Recipient string
     Type string
     Destination string
+    LocalhostOnly bool
 }
 
 type Config struct {
@@ -76,34 +77,40 @@ func main() {
 		Hostname: config.Hostname,
 
 	    Handler: func(peer smtpd.Peer, env smtpd.Envelope) error {
-
-            //Find forward address and forward mail
-            
             for _, route := range routes{
-                for _, recipient := range env.Recipients{
-                    match, _ := regexp.MatchString(route.Recipient, recipient)
-                    if (match){
-                        log.Println("Email received and forwared for " + recipient)
-                        if route.Type == "SMTP"{
-                             return smtp.SendMail(
-                                        config.Relay,
-                                        smtp.PlainAuth(config.Username, config.Username, config.Password, strings.Split(config.Relay, ":")[0]),
-                                        env.Sender,
-                                        []string{route.Destination},
-                                        env.Data,
-                            )
-                        }
-                        if route.Type == "HTTP"{     
-                            data, err := json.Marshal(env)
-                            if (err != nil){
-                                log.Println("Unable to parse envelope from", env.Sender)
+                if !(route.LocalhostOnly && peer.Addr.String() != "127.0.0.1"){
+                    for _, recipient := range env.Recipients{
+                        match, _ := regexp.MatchString(route.Recipient, recipient)
+                        if (match || route.Recipient == ""){
+                            log.Println("Email received and forwared for " + recipient)
+                            
+                            var dst []string
+                            if route.Destination != ""{
+                                dst = []string{route.Destination}
                             }else{
-                                http.Post(route.Destination, "application/json", bytes.NewBuffer(data))
-                                return nil
+                                dst = env.Recipients
                             }
+                            if route.Type == "SMTP"{
+                                return smtp.SendMail(
+                                            config.Relay,
+                                            smtp.PlainAuth(config.Username, config.Username, config.Password, strings.Split(config.Relay, ":")[0]),
+                                            env.Sender,
+                                            dst,
+                                            env.Data,
+                                )
+                            }
+                            if route.Type == "HTTP"{     
+                                data, err := json.Marshal(env)
+                                if (err != nil){
+                                    log.Println("Unable to parse envelope from", env.Sender)
+                                }else{
+                                    http.Post(route.Destination, "application/json", bytes.NewBuffer(data))
+                                    return nil
+                                }
+                            }
+                        }else{
+                            log.Println("Email rejected for " + recipient)
                         }
-                    }else{
-                        log.Println("Email rejected for " + recipient)
                     }
                 }
             }
