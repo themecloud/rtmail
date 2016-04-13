@@ -1,8 +1,8 @@
 curl -s https://build.rtek.se/rtmail > /usr/bin/rtmail
-curl -s https://raw.githubusercontent.com/rasmusj-se/rtmail/master/rtmail-service.sh > /usr/bin/rtmail-service.sh
+curl -s https://raw.githubusercontent.com/rasmusj-se/rtmail/master/scripts/rtmail-service.sh > /usr/bin/rtmail-service.sh
 chmod a+x /usr/bin/rtmail
 chmod a+x /usr/bin/rtmail-service.sh
-curl -s https://raw.githubusercontent.com/rasmusj-se/rtmail/master/upstart.conf > /etc/init/rtmail.conf
+curl -s https://raw.githubusercontent.com/rasmusj-se/rtmail/master/scripts/upstart.conf > /etc/init/rtmail.conf
 mkdir /etc/rtmail/
 curl -s https://raw.githubusercontent.com/rasmusj-se/rtmail/master/rtmail.conf > /etc/rtmail/rtmail.conf
 curl -s https://raw.githubusercontent.com/rasmusj-se/rtmail/master/routes.conf > /etc/rtmail/routes.conf
