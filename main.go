@@ -91,6 +91,7 @@ func main() {
                                 dst = env.Recipients
                             }
                             if route.Type == "SMTP"{
+				if config.Username != ""{
                                 return smtp.SendMail(
                                             config.Relay,
                                             smtp.PlainAuth(config.Username, config.Username, config.Password, strings.Split(config.Relay, ":")[0]),
@@ -98,6 +99,15 @@ func main() {
                                             dst,
                                             env.Data,
                                 )
+				}else{
+				return smtp.SendMail(
+                                            config.Relay,
+                                            nil,
+                                            env.Sender,
+                                            dst,
+                                            env.Data,
+                                )
+				}
                             }
                             if route.Type == "HTTP"{     
                                 data, err := json.Marshal(env)
