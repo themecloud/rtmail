@@ -1,0 +1,3 @@
+package: themecloud/rtmail
+import:
+- package: bitbucket.org/chrj/smtpd
